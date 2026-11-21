@@ -1,0 +1,19 @@
+INICIO
+    GUARDE idade = 17
+    GUARDE habilitado = VERDADEIRO
+
+    SE idade >= 18 E habilitado ENTAO
+        MOSTRE "Acesso liberado"
+    SENAO
+        MOSTRE "Acesso negado"
+    FIMSE
+
+    idade = idade + 1
+    SE idade == 18 ENTAO
+        MOSTRE "Agora tem 18"
+    FIMSE
+
+    SE NAO FALSO OU VERDADEIRO ENTAO
+        MOSTRE "Operadores lógicos funcionando"
+    FIMSE
+FIM
