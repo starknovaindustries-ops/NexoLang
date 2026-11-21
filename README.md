@@ -1,60 +1,62 @@
 # NexoLang
 
-**NexoLang** é uma linguagem de programação de propósito geral em desenvolvimento, criada para aplicações, sistemas e programas.
+NexoLang é uma linguagem de programação de propósito geral em desenvolvimento, criada para aplicações, sistemas e programas.
 
-> Status: versão 0.1 em construção. Lexer, AST, Parser e Interpreter iniciais implementados.
-
-## Objetivos
-
-- Sintaxe própria em português.
-- Interpretador próprio.
-- Implementação inicial do interpretador em Kotlin/JVM.
-- Arquivos de código com extensão `.nex`.
-- Evolução para aplicações, ferramentas e integração com o NexoOS.
+> Status: Runtime 0.2 em desenvolvimento. Lexer, AST, Parser e Interpreter possuem suporte inicial a condicionais, lógica e reatribuição.
 
 ## Exemplo
 
-```nex
+~~~nex
 INICIO
-    GUARDE nome = "NexoLang"
-    GUARDE total = (10 + 5) * 2
-    MOSTRE "Olá, " + nome
-    MOSTRE total
+    GUARDE idade = 17
+    SE idade >= 18 ENTAO
+        MOSTRE "Acesso liberado"
+    SENAO
+        MOSTRE "Acesso negado"
+    FIMSE
+    idade = idade + 1
+    MOSTRE idade
 FIM
-```
+~~~
 
 ## Arquitetura
 
-1. **Lexer** — transforma o texto em tokens.
-2. **Parser** — valida a estrutura e a precedência das expressões.
-3. **AST** — representa expressões e comandos em uma árvore.
-4. **Interpreter** — executa comandos e avalia expressões.
-5. **Ambiente** — armazena variáveis durante a execução.
+1. Lexer — converte o texto em tokens.
+2. Parser — valida a sintaxe e cria a AST.
+3. AST — representa expressões e comandos.
+4. Interpreter — executa os programas.
+5. Ambiente — armazena as variáveis.
 
-## Recursos implementados
+## Recursos da versão 0.2
 
-- Comandos `MOSTRE` e `GUARDE`.
-- Variáveis durante a execução do programa.
-- Números inteiros e decimais (representados internamente como Double).
-- Operações `+`, `-`, `*`, `/`, sinais unários e parênteses.
-- Concatenação de dois textos com `+`.
-- Erros para variável não declarada, declaração duplicada, tipo inválido e divisão por zero.
-- Mensagens de erro léxico, sintático e de execução com linha e coluna.
+- Declaração GUARDE e reatribuição nome = expressão.
+- Saída com MOSTRE.
+- Booleanos VERDADEIRO e FALSO.
+- Condicionais SE ... ENTAO ... SENAO ... FIMSE.
+- Comparações >, >=, <, <=, ==, !=.
+- Operadores lógicos E, OU, NAO, com curto-circuito.
+- Operações matemáticas e concatenação de textos.
+- Erros léxicos, sintáticos e de execução com localização.
 
-## Executar um arquivo
+## Executar
 
-Requisitos: JDK 17 e Gradle instalado.
+Requisitos: JDK 17 e Gradle.
 
-```bash
-gradle run --args="examples/hello.nex"
-```
+~~~bash
+gradle run --args="examples/runtime-02.nex"
+gradle test
+~~~
 
-O comando executa o programa NexoLang.
+O GitHub Actions executa os testes e o exemplo Runtime 0.2 em cada push para main e em pull requests.
 
-## Ainda não implementado
+## Integração Android / NexoOS
 
-Condições, laços, funções, reatribuição, coleções, módulos, entrada do usuário, comentários e biblioteca padrão.
+O núcleo do Lexer, Parser e Interpreter é Kotlin/JVM e foi organizado sem dependência de APIs exclusivas do Android. A integração Android ainda precisa ser feita e validada dentro do projeto NexoOS-App.
+
+## Próximas etapas
+
+Consulte docs/ROADMAP.md.
 
 ## Licença
 
-A licença ainda será definida. Até lá, todos os direitos permanecem reservados; não presuma que o projeto esteja sob MIT.
+A licença ainda será definida. Até lá, todos os direitos permanecem reservados.
