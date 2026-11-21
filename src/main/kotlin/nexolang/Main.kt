@@ -4,7 +4,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
     if (args.size != 1) {
-        println("NexoLang 0.1.0 — analisador léxico e sintático")
+        println("NexoLang 0.1.0 — interpretador")
         println("Uso: gradle run --args=\"caminho/arquivo.nex\"")
         return
     }
@@ -18,12 +18,12 @@ fun main(args: Array<String>) {
     try {
         val tokens = Lexer(file.readText()).scanTokens()
         val program = Parser(tokens).parse()
-        println("Análise sintática concluída.")
-        println("AST:")
-        println(program)
+        Interpreter().execute(program)
     } catch (error: LexicalException) {
         System.err.println(error.message)
     } catch (error: ParseException) {
+        System.err.println(error.message)
+    } catch (error: RuntimeExceptionNexo) {
         System.err.println(error.message)
     }
 }
