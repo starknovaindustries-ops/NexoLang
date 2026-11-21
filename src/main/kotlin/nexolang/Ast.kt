@@ -11,6 +11,12 @@ sealed interface Expr {
 sealed interface Stmt {
     data class Show(val expression: Expr) : Stmt
     data class Declare(val name: Token, val initializer: Expr) : Stmt
+    data class Assign(val name: Token, val value: Expr) : Stmt
+    data class If(
+        val condition: Expr,
+        val thenBranch: List<Stmt>,
+        val elseBranch: List<Stmt>
+    ) : Stmt
 }
 
 data class Program(val statements: List<Stmt>)
