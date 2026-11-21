@@ -127,6 +127,7 @@ class Interpreter(
 
     private fun formatValue(value: Any): String = when (value) {
         is Double -> if (value.isFinite() && value % 1.0 == 0.0) value.toLong().toString() else value.toString()
+        is Boolean -> if (value) "VERDADEIRO" else "FALSO"
         else -> value.toString()
     }
 
