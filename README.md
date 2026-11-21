@@ -50,3 +50,21 @@ Consulte [docs/ROADMAP.md](docs/ROADMAP.md).
 ## Licença
 
 A licença ainda será definida. Até lá, todos os direitos permanecem reservados; não presuma que o projeto esteja sob MIT.
+
+
+## Interpretador — início da versão 0.1
+
+A base do projeto usa Kotlin/JVM com Gradle. O primeiro componente implementado é o analisador léxico (Lexer), que converte o código-fonte em tokens.
+
+### Requisitos
+
+- JDK 17
+- Gradle Wrapper ainda será adicionado; por enquanto, use uma instalação local do Gradle.
+
+### Executar o analisador léxico
+
+```bash
+gradle run --args="examples/hello.nex"
+```
+
+O comando imprime os tokens reconhecidos. **A execução completa de programas NexoLang ainda não está implementada**; Parser e Interpreter são as próximas etapas.
