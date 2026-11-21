@@ -2,7 +2,7 @@
 
 **NexoLang** é uma linguagem de programação de propósito geral em desenvolvimento, criada para aplicações, sistemas e programas.
 
-> Status: planejamento e especificação inicial — versão 0.1 em construção.
+> Status: versão 0.1 em construção. Lexer, AST e Parser iniciais implementados; execução de programas ainda não implementada.
 
 ## Objetivos
 
@@ -12,35 +12,39 @@
 - Arquivos de código com extensão `.nex`.
 - Evolução para aplicações, ferramentas e integração com o NexoOS.
 
-## Primeiro exemplo
+## Exemplo
 
 ```nex
 INICIO
-    MOSTRE "Olá, NexoOS!"
     GUARDE nome = "NexoLang"
+    GUARDE total = (10 + 5) * 2
     MOSTRE nome
+    MOSTRE total
 FIM
 ```
 
-## Arquitetura planejada
+## Arquitetura
 
 1. **Lexer** — transforma o texto em tokens.
-2. **Parser** — verifica a sintaxe e constrói a estrutura do programa.
-3. **AST** — representa o código em uma árvore sintática.
-4. **Interpreter** — executa os comandos.
-5. **Runtime** — fornece o ambiente de execução e os valores.
+2. **Parser** — valida a estrutura e a precedência das expressões.
+3. **AST** — representa expressões e comandos em uma árvore.
+4. **Interpreter** — próxima etapa: executar os comandos.
+5. **Runtime** — ambiente de execução e valores.
 
-## Estrutura do projeto
+## Implementação atual
 
-```text
-NexoLang/
-├── docs/
-│   ├── ROADMAP.md
-│   └── SYNTAX.md
-├── examples/
-│   └── hello.nex
-├── .gitignore
-└── README.md
+- Tokens para palavras-chave, identificadores, números, textos, operadores e parênteses.
+- Comandos `MOSTRE` e `GUARDE`.
+- Expressões com `+`, `-`, `*`, `/`, sinais unários e parênteses.
+- Mensagens de erro léxico e sintático com linha e coluna.
+- O programa principal analisa um arquivo e imprime a AST; ainda não executa o código NexoLang.
+
+## Executar
+
+Requisitos: JDK 17 e Gradle instalado.
+
+```bash
+gradle run --args="examples/hello.nex"
 ```
 
 ## Roadmap
@@ -50,21 +54,3 @@ Consulte [docs/ROADMAP.md](docs/ROADMAP.md).
 ## Licença
 
 A licença ainda será definida. Até lá, todos os direitos permanecem reservados; não presuma que o projeto esteja sob MIT.
-
-
-## Interpretador — início da versão 0.1
-
-A base do projeto usa Kotlin/JVM com Gradle. O primeiro componente implementado é o analisador léxico (Lexer), que converte o código-fonte em tokens.
-
-### Requisitos
-
-- JDK 17
-- Gradle Wrapper ainda será adicionado; por enquanto, use uma instalação local do Gradle.
-
-### Executar o analisador léxico
-
-```bash
-gradle run --args="examples/hello.nex"
-```
-
-O comando imprime os tokens reconhecidos. **A execução completa de programas NexoLang ainda não está implementada**; Parser e Interpreter são as próximas etapas.
