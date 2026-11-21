@@ -6,11 +6,7 @@ class LexicalException(
     val columnNumber: Int
 ) : RuntimeException("Erro léxico em $lineNumber:$columnNumber: $message")
 
-/**
- * Converte o código-fonte NexoLang em uma sequência de tokens.
- *
- * Nesta primeira versão, cada comando deve ocupar sua própria linha.
- */
+/** Converte o código-fonte NexoLang em tokens. */
 class Lexer(private val source: String) {
     private val tokens = mutableListOf<Token>()
     private var start = 0
@@ -24,7 +20,16 @@ class Lexer(private val source: String) {
         "INICIO" to TokenType.INICIO,
         "FIM" to TokenType.FIM,
         "MOSTRE" to TokenType.MOSTRE,
-        "GUARDE" to TokenType.GUARDE
+        "GUARDE" to TokenType.GUARDE,
+        "SE" to TokenType.SE,
+        "ENTAO" to TokenType.ENTAO,
+        "SENAO" to TokenType.SENAO,
+        "FIMSE" to TokenType.FIMSE,
+        "E" to TokenType.E,
+        "OU" to TokenType.OU,
+        "NAO" to TokenType.NAO,
+        "VERDADEIRO" to TokenType.VERDADEIRO,
+        "FALSO" to TokenType.FALSO
     )
 
     fun scanTokens(): List<Token> {
@@ -34,7 +39,6 @@ class Lexer(private val source: String) {
             startColumn = column
             scanToken()
         }
-
         tokens += Token(TokenType.EOF, "", line, column)
         return tokens.toList()
     }
@@ -57,7 +61,10 @@ class Lexer(private val source: String) {
             '-' -> addToken(TokenType.MINUS)
             '*' -> addToken(TokenType.STAR)
             '/' -> addToken(TokenType.SLASH)
-            '=' -> addToken(TokenType.EQUAL)
+            '=' -> addToken(if (match('=')) TokenType.EQUAL_EQUAL else TokenType.EQUAL)
+            '!' -> if (match('=')) addToken(TokenType.BANG_EQUAL) else throw error("Use ! apenas junto de =; para negação, use NAO")
+            '>' -> addToken(if (match('=')) TokenType.GREATER_EQUAL else TokenType.GREATER)
+            '<' -> addToken(if (match('=')) TokenType.LESS_EQUAL else TokenType.LESS)
             '(' -> addToken(TokenType.LEFT_PAREN)
             ')' -> addToken(TokenType.RIGHT_PAREN)
             '"' -> scanString()
@@ -76,31 +83,30 @@ class Lexer(private val source: String) {
             }
             advance()
         }
-
         if (isAtEnd()) throw error("Texto sem aspas de fechamento")
-
-        advance() // aspas finais
-        val value = source.substring(start + 1, current - 1)
-        tokens += Token(TokenType.STRING, value, startLine, startColumn)
+        advance()
+        tokens += Token(TokenType.STRING, source.substring(start + 1, current - 1), startLine, startColumn)
     }
 
     private fun scanNumber() {
         while (peek().isDigit()) advance()
-
         if (peek() == '.' && peekNext().isDigit()) {
             advance()
             while (peek().isDigit()) advance()
         }
-
         addToken(TokenType.NUMBER)
     }
 
     private fun scanIdentifier() {
         while (peek().isLetterOrDigit() || peek() == '_') advance()
-
         val text = source.substring(start, current)
-        val type = keywords[text] ?: TokenType.IDENTIFIER
-        tokens += Token(type, text, startLine, startColumn)
+        tokens += Token(keywords[text] ?: TokenType.IDENTIFIER, text, startLine, startColumn)
+    }
+
+    private fun match(expected: Char): Boolean {
+        if (isAtEnd() || source[current] != expected) return false
+        advance()
+        return true
     }
 
     private fun advance(): Char {
@@ -113,14 +119,8 @@ class Lexer(private val source: String) {
         tokens += Token(type, source.substring(start, current), startLine, startColumn)
     }
 
-    private fun peek(): Char =
-        if (isAtEnd()) '\u0000' else source[current]
-
-    private fun peekNext(): Char =
-        if (current + 1 >= source.length) '\u0000' else source[current + 1]
-
+    private fun peek(): Char = if (isAtEnd()) '\u0000' else source[current]
+    private fun peekNext(): Char = if (current + 1 >= source.length) '\u0000' else source[current + 1]
     private fun isAtEnd(): Boolean = current >= source.length
-
-    private fun error(message: String) =
-        LexicalException(message, startLine, startColumn)
+    private fun error(message: String) = LexicalException(message, startLine, startColumn)
 }
