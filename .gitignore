@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+*.class
+*.jar
+out/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Operating systems
+.DS_Store
+Thumbs.db
