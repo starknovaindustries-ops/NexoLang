@@ -1,0 +1,5 @@
+INICIO
+    MOSTRE "Olá, NexoOS!"
+    GUARDE nome = "NexoLang"
+    MOSTRE nome
+FIM
