@@ -2,7 +2,7 @@
 
 **NexoLang** é uma linguagem de programação de propósito geral em desenvolvimento, criada para aplicações, sistemas e programas.
 
-> Status: versão 0.1 em construção. Lexer, AST e Parser iniciais implementados; execução de programas ainda não implementada.
+> Status: versão 0.1 em construção. Lexer, AST, Parser e Interpreter iniciais implementados.
 
 ## Objetivos
 
@@ -18,7 +18,7 @@
 INICIO
     GUARDE nome = "NexoLang"
     GUARDE total = (10 + 5) * 2
-    MOSTRE nome
+    MOSTRE "Olá, " + nome
     MOSTRE total
 FIM
 ```
@@ -28,18 +28,20 @@ FIM
 1. **Lexer** — transforma o texto em tokens.
 2. **Parser** — valida a estrutura e a precedência das expressões.
 3. **AST** — representa expressões e comandos em uma árvore.
-4. **Interpreter** — próxima etapa: executar os comandos.
-5. **Runtime** — ambiente de execução e valores.
+4. **Interpreter** — executa comandos e avalia expressões.
+5. **Ambiente** — armazena variáveis durante a execução.
 
-## Implementação atual
+## Recursos implementados
 
-- Tokens para palavras-chave, identificadores, números, textos, operadores e parênteses.
 - Comandos `MOSTRE` e `GUARDE`.
-- Expressões com `+`, `-`, `*`, `/`, sinais unários e parênteses.
-- Mensagens de erro léxico e sintático com linha e coluna.
-- O programa principal analisa um arquivo e imprime a AST; ainda não executa o código NexoLang.
+- Variáveis durante a execução do programa.
+- Números inteiros e decimais (representados internamente como Double).
+- Operações `+`, `-`, `*`, `/`, sinais unários e parênteses.
+- Concatenação de dois textos com `+`.
+- Erros para variável não declarada, declaração duplicada, tipo inválido e divisão por zero.
+- Mensagens de erro léxico, sintático e de execução com linha e coluna.
 
-## Executar
+## Executar um arquivo
 
 Requisitos: JDK 17 e Gradle instalado.
 
@@ -47,9 +49,11 @@ Requisitos: JDK 17 e Gradle instalado.
 gradle run --args="examples/hello.nex"
 ```
 
-## Roadmap
+O comando executa o programa NexoLang.
 
-Consulte [docs/ROADMAP.md](docs/ROADMAP.md).
+## Ainda não implementado
+
+Condições, laços, funções, reatribuição, coleções, módulos, entrada do usuário, comentários e biblioteca padrão.
 
 ## Licença
 
