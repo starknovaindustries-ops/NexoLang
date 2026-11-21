@@ -38,7 +38,7 @@ FIM"""
 MOSTRE VERDADEIRO E NAO FALSO
 MOSTRE FALSO OU (2 > 3)
 FIM"""
-        assertEquals(listOf("true", "false"), runProgram(source))
+        assertEquals(listOf("VERDADEIRO", "FALSO"), runProgram(source))
     }
 
     @Test
