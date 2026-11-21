@@ -1,53 +1,62 @@
-# Sintaxe inicial da NexoLang
+# Sintaxe NexoLang 0.2
 
-A sintaxe abaixo corresponde aos recursos aceitos pelo Lexer e Parser iniciais. Ela poderá evoluir antes da versão 1.0.
+Esta página documenta os recursos presentes no Lexer, Parser e Interpreter atuais.
 
-## Estrutura
+## Estrutura e saída
 
-Todo programa começa com `INICIO` e termina com `FIM`. Cada comando ocupa sua própria linha.
-
-```nex
+~~~nex
 INICIO
-    MOSTRE "Olá, mundo!"
+    MOSTRE "Olá, NexoOS!"
 FIM
-```
+~~~
 
-## Variáveis
+## Variáveis e reatribuição
 
-`GUARDE` declara uma variável:
+GUARDE declara uma variável. Depois, use nome = expressão para alterar seu valor.
 
-```nex
+~~~nex
 INICIO
-    GUARDE nome = "NexoLang"
-    GUARDE versao = 0.1
-    MOSTRE nome
-    MOSTRE versao
+    GUARDE pontos = 10
+    pontos = pontos + 5
+    MOSTRE pontos
 FIM
-```
+~~~
 
-## Expressões matemáticas
+Atribuir a uma variável ainda não declarada ou declarar o mesmo nome duas vezes gera erro.
 
-Operadores disponíveis: `+`, `-`, `*`, `/`. Parênteses alteram a precedência.
+## Booleanos e comparações
 
-```nex
+Valores: VERDADEIRO e FALSO.
+
+Comparadores numéricos: >, >=, <, <=, ==, !=.
+
+## Operadores lógicos
+
+- E: verdadeiro quando os dois lados são verdadeiros.
+- OU: verdadeiro quando pelo menos um lado é verdadeiro.
+- NAO: inverte um booleano.
+
+Os operadores E e OU usam curto-circuito.
+
+## Condicionais
+
+Todo bloco condicional termina com FIMSE. SENAO é opcional.
+
+~~~nex
 INICIO
-    GUARDE resultado = (10 + 5) * 2
-    MOSTRE resultado
-    MOSTRE -resultado
+    GUARDE idade = 20
+    SE idade >= 18 E VERDADEIRO ENTAO
+        MOSTRE "Maior de idade"
+    SENAO
+        MOSTRE "Menor de idade"
+    FIMSE
 FIM
-```
+~~~
 
-A precedência é: parênteses, sinais unários, multiplicação/divisão e adição/subtração.
+## Precedência
 
-## Regras atuais
+Da maior para a menor: parênteses, operadores unários, multiplicação/divisão, adição/subtração, comparações, igualdade, E, OU.
 
-- Palavras-chave em maiúsculas.
-- Textos entre aspas duplas e sem quebra de linha.
-- Identificadores começam com letra ou sublinhado.
-- Números inteiros e decimais usam ponto.
-- Comandos em linhas separadas.
-- Não pode haver conteúdo depois de `FIM`.
+## Limitações atuais
 
-## Ainda não implementado
-
-Condições, laços, funções, reatribuição, coleções, módulos, comentários, escape em strings e execução pelo interpretador.
+Os comparadores relacionais aceitam números. Igualdade compara números por valor e outros tipos por igualdade. Ainda não existem laços, funções, escopos locais, listas, mapas, entrada do usuário ou comentários.
