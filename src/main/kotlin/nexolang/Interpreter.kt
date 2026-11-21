@@ -6,7 +6,7 @@ class RuntimeExceptionNexo(
     val columnNumber: Int
 ) : RuntimeException("Erro de execução em $lineNumber:$columnNumber: $message")
 
-/** Executa a AST: declarações, saída, variáveis e operações aritméticas. */
+/** Executa programas NexoLang 0.2. */
 class Interpreter(
     private val output: (String) -> Unit = ::println
 ) {
@@ -14,7 +14,11 @@ class Interpreter(
 
     fun execute(program: Program) {
         environment.clear()
-        for (statement in program.statements) executeStatement(statement)
+        executeStatements(program.statements)
+    }
+
+    private fun executeStatements(statements: List<Stmt>) {
+        for (statement in statements) executeStatement(statement)
     }
 
     private fun executeStatement(statement: Stmt) {
@@ -26,7 +30,19 @@ class Interpreter(
                 }
                 environment[name] = evaluate(statement.initializer)
             }
+            is Stmt.Assign -> {
+                val name = statement.name.lexeme
+                if (!environment.containsKey(name)) {
+                    throw runtimeError(statement.name, "A variável '$name' não foi declarada.")
+                }
+                environment[name] = evaluate(statement.value)
+            }
             is Stmt.Show -> output(formatValue(evaluate(statement.expression)))
+            is Stmt.If -> {
+                val condition = requireBoolean(evaluate(statement.condition), tokenOf(statement.condition))
+                if (condition) executeStatements(statement.thenBranch)
+                else executeStatements(statement.elseBranch)
+            }
         }
     }
 
@@ -37,10 +53,11 @@ class Interpreter(
                 ?: throw runtimeError(expression.name, "A variável '${expression.name.lexeme}' não foi declarada.")
             is Expr.Grouping -> evaluate(expression.expression)
             is Expr.Unary -> {
-                val number = requireNumber(evaluate(expression.right), expression.operator)
+                val value = evaluate(expression.right)
                 when (expression.operator.type) {
-                    TokenType.MINUS -> -number
-                    TokenType.PLUS -> number
+                    TokenType.MINUS -> -requireNumber(value, expression.operator)
+                    TokenType.PLUS -> requireNumber(value, expression.operator)
+                    TokenType.NAO -> !requireBoolean(value, expression.operator)
                     else -> throw runtimeError(expression.operator, "Operador unário inválido.")
                 }
             }
@@ -48,35 +65,70 @@ class Interpreter(
         }
 
     private fun evaluateBinary(expression: Expr.Binary): Any {
+        val operator = expression.operator
         val left = evaluate(expression.left)
-        val right = evaluate(expression.right)
 
-        if (expression.operator.type == TokenType.PLUS && left is String && right is String) {
+        // Operadores lógicos usam curto-circuito.
+        if (operator.type == TokenType.OU) {
+            val leftBool = requireBoolean(left, operator)
+            return leftBool || requireBoolean(evaluate(expression.right), operator)
+        }
+        if (operator.type == TokenType.E) {
+            val leftBool = requireBoolean(left, operator)
+            return leftBool && requireBoolean(evaluate(expression.right), operator)
+        }
+
+        val right = evaluate(expression.right)
+        if (operator.type == TokenType.EQUAL_EQUAL) return valuesEqual(left, right)
+        if (operator.type == TokenType.BANG_EQUAL) return !valuesEqual(left, right)
+
+        if (operator.type == TokenType.PLUS && left is String && right is String) {
             return left + right
         }
 
-        val a = requireNumber(left, expression.operator)
-        val b = requireNumber(right, expression.operator)
-        return when (expression.operator.type) {
+        val a = requireNumber(left, operator)
+        val b = requireNumber(right, operator)
+        return when (operator.type) {
             TokenType.PLUS -> a + b
             TokenType.MINUS -> a - b
             TokenType.STAR -> a * b
             TokenType.SLASH -> {
-                if (b == 0.0) throw runtimeError(expression.operator, "Divisão por zero.")
+                if (b == 0.0) throw runtimeError(operator, "Divisão por zero.")
                 a / b
             }
-            else -> throw runtimeError(expression.operator, "Operador binário inválido.")
+            TokenType.GREATER -> a > b
+            TokenType.GREATER_EQUAL -> a >= b
+            TokenType.LESS -> a < b
+            TokenType.LESS_EQUAL -> a <= b
+            else -> throw runtimeError(operator, "Operador binário inválido.")
         }
+    }
+
+    private fun valuesEqual(left: Any, right: Any): Boolean {
+        if (left is Number && right is Number) return left.toDouble() == right.toDouble()
+        return left == right
     }
 
     private fun requireNumber(value: Any, token: Token): Double =
         (value as? Number)?.toDouble()
             ?: throw runtimeError(token, "Operação matemática exige valores numéricos.")
 
-    private fun formatValue(value: Any): String =
-        if (value is Double && value.isFinite() && value % 1.0 == 0.0) {
-            value.toLong().toString()
-        } else value.toString()
+    private fun requireBoolean(value: Any, token: Token): Boolean =
+        value as? Boolean
+            ?: throw runtimeError(token, "A condição exige VERDADEIRO ou FALSO.")
+
+    private fun tokenOf(expression: Expr): Token = when (expression) {
+        is Expr.Variable -> expression.name
+        is Expr.Unary -> expression.operator
+        is Expr.Binary -> expression.operator
+        is Expr.Literal -> Token(TokenType.VERDADEIRO, expression.value.toString(), 1, 1)
+        is Expr.Grouping -> tokenOf(expression.expression)
+    }
+
+    private fun formatValue(value: Any): String = when (value) {
+        is Double -> if (value.isFinite() && value % 1.0 == 0.0) value.toLong().toString() else value.toString()
+        else -> value.toString()
+    }
 
     private fun runtimeError(token: Token, message: String) =
         RuntimeExceptionNexo(message, token.line, token.column)
