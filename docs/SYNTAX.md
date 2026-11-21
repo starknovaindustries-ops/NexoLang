@@ -1,25 +1,14 @@
 # Sintaxe inicial da NexoLang
 
-Este documento registra a proposta inicial da sintaxe. Ela poderá mudar antes da versão 1.0.
+A sintaxe abaixo corresponde aos recursos aceitos pelo Lexer e Parser iniciais. Ela poderá evoluir antes da versão 1.0.
 
-## Estrutura de um programa
+## Estrutura
 
-Todo programa começa com `INICIO` e termina com `FIM`.
-
-```nex
-INICIO
-    MOSTRE "Olá!"
-FIM
-```
-
-## Saída
-
-`MOSTRE` exibe um valor:
+Todo programa começa com `INICIO` e termina com `FIM`. Cada comando ocupa sua própria linha.
 
 ```nex
 INICIO
     MOSTRE "Olá, mundo!"
-    MOSTRE 42
 FIM
 ```
 
@@ -36,13 +25,29 @@ INICIO
 FIM
 ```
 
-## Convenções provisórias
+## Expressões matemáticas
 
-- Palavras-chave são escritas em maiúsculas.
-- Texto usa aspas duplas.
-- Cada instrução ocupa uma linha.
-- O arquivo-fonte usa a extensão `.nex`.
+Operadores disponíveis: `+`, `-`, `*`, `/`. Parênteses alteram a precedência.
 
-## Recursos ainda não especificados
+```nex
+INICIO
+    GUARDE resultado = (10 + 5) * 2
+    MOSTRE resultado
+    MOSTRE -resultado
+FIM
+```
 
-Condições, laços, funções, coleções, módulos, tratamento de erros e biblioteca padrão serão definidos em etapas futuras.
+A precedência é: parênteses, sinais unários, multiplicação/divisão e adição/subtração.
+
+## Regras atuais
+
+- Palavras-chave em maiúsculas.
+- Textos entre aspas duplas e sem quebra de linha.
+- Identificadores começam com letra ou sublinhado.
+- Números inteiros e decimais usam ponto.
+- Comandos em linhas separadas.
+- Não pode haver conteúdo depois de `FIM`.
+
+## Ainda não implementado
+
+Condições, laços, funções, reatribuição, coleções, módulos, comentários, escape em strings e execução pelo interpretador.
